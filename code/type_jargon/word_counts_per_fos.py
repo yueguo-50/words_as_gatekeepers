@@ -16,12 +16,12 @@ import numpy as np
 import re
 from helper import get_journal_venue
 
-ROOT = '/home/lucyl/language-map-of-science/'
+ROOT = '/net/nfs/s2-research/yueg/words_as_gatekeepers_yue/'
 DATA = ROOT + 'data/'
 LOGS = ROOT + 'logs/'
 S3_S2ORC_BUCKET = 'ai2-s2-s2orc'
 S3_S2ORC_PREFIX = '20200705v1/full/metadata/'
-METADATA = '/net/nfs.cirrascale/s2-research/lucyl/full_metadata/'
+METADATA = '/net/nfs.cirrascale/s2-research/yueg/data/full_metadata/'
 
 def process_batch(batch): 
     random.seed(0)
@@ -45,7 +45,7 @@ def process_batch(batch):
     download = False 
     if not os.path.exists(download_target_path): 
         download = True
-        args = ['/home/lucyl/bin/aws', 's3', 'cp', s3_url, f'{download_target_dir}']
+        args = ['/net/nfs/s2-research/yueg/words_as_gatekeepers_yue/aws', 's3', 'cp', s3_url, f'{download_target_dir}']
         subprocess.run(args)
 
     args = ['gunzip', '-f', download_target_path]
@@ -120,6 +120,7 @@ def count_words_per_input(fos_map_path='wiktionary/s2orc_fos.json'):
         
     papers_to_keep = set()
     with open(DATA + 'input_paper_ids/fos_analysis.txt', 'r') as infile: 
+        print(DATA + 'input_paper_ids/fos_analysis.txt')
         for line in infile: 
             papers_to_keep.add(line.strip())
             
@@ -141,7 +142,8 @@ def count_words_per_input(fos_map_path='wiktionary/s2orc_fos.json'):
     print("Batches to do:", len(batches))
    
     with multiprocessing.Pool(processes=multiprocessing.cpu_count() // 3) as p:
-        p.map(process_batch, batches)
+        # p.map(process_batch, batches)
+        list(tqdm(p.imap(process_batch, batches), total=len(batches)))
 
     print("done") 
     
