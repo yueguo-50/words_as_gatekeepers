@@ -120,7 +120,6 @@ def count_words_per_input(fos_map_path='wiktionary/s2orc_fos.json'):
         
     papers_to_keep = set()
     with open(DATA + 'input_paper_ids/fos_analysis.txt', 'r') as infile: 
-        print(DATA + 'input_paper_ids/fos_analysis.txt')
         for line in infile: 
             papers_to_keep.add(line.strip())
             
@@ -142,8 +141,8 @@ def count_words_per_input(fos_map_path='wiktionary/s2orc_fos.json'):
     print("Batches to do:", len(batches))
    
     with multiprocessing.Pool(processes=multiprocessing.cpu_count() // 3) as p:
-        # p.map(process_batch, batches)
-        list(tqdm(p.imap(process_batch, batches), total=len(batches)))
+        p.map(process_batch, batches)
+        # list(tqdm(p.imap(process_batch, batches), total=len(batches)))
 
     print("done") 
     
